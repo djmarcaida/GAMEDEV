@@ -13,10 +13,7 @@ The `main` branch contains the overarching group/main project, while specific co
 
 </div>
 
-### 🖩 submission manifest.ini
-
 ```ini
-[Submission_Manifest]
 Course       = GAMEDEV (Game Development)
 Section      = S01
 Student      = Duncan Joseph Marcaida
