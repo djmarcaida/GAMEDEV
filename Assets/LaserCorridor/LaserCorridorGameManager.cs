@@ -1,10 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Central manager for the Resident Evil Laser Corridor experience.
-/// Coordinates game loop, respawns, laser spawning, and level completion.
-/// </summary>
 public class LaserCorridorGameManager : MonoBehaviour
 {
     public static LaserCorridorGameManager Instance { get; private set; }
@@ -17,13 +13,10 @@ public class LaserCorridorGameManager : MonoBehaviour
         Victory
     }
 
-    [Header("Core References")]
     [SerializeField] private GameObject playerObject;
     [SerializeField] private Transform startPoint;
     [SerializeField] private LaserSpawner laserSpawner;
     [SerializeField] private CorridorGoal corridorGoal;
-
-    [Header("Respawn & Delay Settings")]
     [SerializeField] private float gameOverRespawnDelay = 2.0f;
 
     private GameState currentState = GameState.Ready;
@@ -44,45 +37,32 @@ public class LaserCorridorGameManager : MonoBehaviour
 
     private void Start()
     {
-        // Auto-discover references if unassigned
         if (playerObject == null)
         {
-            Player p = FindFirstObjectByType<Player>();
+            var p = FindFirstObjectByType<Player>();
             if (p != null) playerObject = p.gameObject;
         }
 
         if (playerObject != null)
         {
-            playerHealth = playerObject.GetComponent<PlayerHealth>();
-            if (playerHealth == null)
-            {
-                playerHealth = playerObject.AddComponent<PlayerHealth>();
-            }
-
-            // Hook death event
-            playerHealth.OnDeath += HandlePlayerDeath;
+            playerHealth = playerObject.GetComponent<PlayerHealth>() ?? playerObject.AddComponent<PlayerHealth>();
+            playerHealth.OnDeath += OnPlayerDied;
         }
 
         if (laserSpawner == null)
-        {
             laserSpawner = FindFirstObjectByType<LaserSpawner>();
-        }
 
         if (corridorGoal == null)
-        {
             corridorGoal = FindFirstObjectByType<CorridorGoal>();
-        }
 
-        // Cache all floor bonus panels
         bonusPanels = FindObjectsByType<BonusFloorPanel>(FindObjectsSortMode.None);
 
-        // Record start point if not set
         if (startPoint == null && playerObject != null)
         {
-            GameObject spObj = new GameObject("StartPoint_Auto");
-            spObj.transform.position = playerObject.transform.position;
-            spObj.transform.rotation = playerObject.transform.rotation;
-            startPoint = spObj.transform;
+            var sp = new GameObject("StartPoint_Auto");
+            sp.transform.position = playerObject.transform.position;
+            sp.transform.rotation = playerObject.transform.rotation;
+            startPoint = sp.transform;
         }
 
         StartRound();
@@ -91,9 +71,7 @@ public class LaserCorridorGameManager : MonoBehaviour
     private void OnDestroy()
     {
         if (playerHealth != null)
-        {
-            playerHealth.OnDeath -= HandlePlayerDeath;
-        }
+            playerHealth.OnDeath -= OnPlayerDied;
     }
 
     public void StartRound()
@@ -107,26 +85,21 @@ public class LaserCorridorGameManager : MonoBehaviour
         }
 
         if (corridorGoal != null)
-        {
             corridorGoal.ResetGoal();
-        }
 
-        ResetAllBonusPanels();
+        ResetBonusPanels();
     }
 
-    private void HandlePlayerDeath()
+    private void OnPlayerDied()
     {
         if (currentState != GameState.Playing) return;
 
         currentState = GameState.GameOver;
-        Debug.Log("[GameManager] GAME OVER! Player eliminated. Preparing reset...");
 
         if (laserSpawner != null)
-        {
             laserSpawner.StopSpawning();
-        }
 
-        StartCoroutine(ResetPlayerRoutine());
+        StartCoroutine(RespawnRoutine());
     }
 
     public void OnGoalReached()
@@ -134,7 +107,6 @@ public class LaserCorridorGameManager : MonoBehaviour
         if (currentState != GameState.Playing) return;
 
         currentState = GameState.Victory;
-        Debug.Log("[GameManager] VICTORY! Corridor Cleared!");
 
         if (laserSpawner != null)
         {
@@ -143,15 +115,14 @@ public class LaserCorridorGameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ResetPlayerRoutine()
+    private IEnumerator RespawnRoutine()
     {
         yield return new WaitForSeconds(gameOverRespawnDelay);
 
-        // Teleport player back to start point safely
         if (playerObject != null && startPoint != null)
         {
-            Rigidbody rb = playerObject.GetComponent<Rigidbody>();
-            CharacterController cc = playerObject.GetComponent<CharacterController>();
+            var rb = playerObject.GetComponent<Rigidbody>();
+            var cc = playerObject.GetComponent<CharacterController>();
 
             if (cc != null) cc.enabled = false;
             if (rb != null)
@@ -177,29 +148,21 @@ public class LaserCorridorGameManager : MonoBehaviour
             if (cc != null) cc.enabled = true;
         }
 
-        // Reset player health and buffs
         if (playerHealth != null)
-        {
             playerHealth.ResetState();
-        }
 
-        // Reset corridor lasers & floor panels
         StartRound();
     }
 
-    private void ResetAllBonusPanels()
+    private void ResetBonusPanels()
     {
         if (bonusPanels == null || bonusPanels.Length == 0)
-        {
             bonusPanels = FindObjectsByType<BonusFloorPanel>(FindObjectsSortMode.None);
-        }
 
         foreach (var panel in bonusPanels)
         {
             if (panel != null)
-            {
                 panel.ResetPanel();
-            }
         }
     }
 }

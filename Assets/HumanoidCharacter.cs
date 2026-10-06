@@ -1,2 +1,5 @@
-// HumanoidCharacter.cs
-// Reverted: Character model has been restored to the classic cylinder representation.
+using UnityEngine;
+
+public class HumanoidCharacter : MonoBehaviour
+{
+}

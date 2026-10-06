@@ -7,9 +7,6 @@ public class VoidRespawn : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Void hit by: " + other.gameObject.name);
-
-        // Find the player object
         GameObject playerObj = null;
 
         if (other.CompareTag("Player"))
@@ -38,20 +35,11 @@ public class VoidRespawn : MonoBehaviour
     private IEnumerator DoTeleport(GameObject target)
     {
         if (respawnPoint == null)
-        {
-            Debug.LogError("Respawn Point is not assigned in the Inspector!");
             yield break;
-        }
 
-        // 1. Handle CharacterController
-        CharacterController cc = target.GetComponent<CharacterController>();
-        if (cc == null) cc = target.GetComponentInChildren<CharacterController>();
+        var cc = target.GetComponent<CharacterController>() ?? target.GetComponentInChildren<CharacterController>();
+        var rb = target.GetComponent<Rigidbody>() ?? target.GetComponentInChildren<Rigidbody>();
 
-        // 2. Handle Rigidbody
-        Rigidbody rb = target.GetComponent<Rigidbody>();
-        if (rb == null) rb = target.GetComponentInChildren<Rigidbody>();
-
-        // Disable movement controllers during move
         if (cc != null) cc.enabled = false;
         if (rb != null)
         {
@@ -60,14 +48,11 @@ public class VoidRespawn : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        // Move the target position
         target.transform.position = respawnPoint.position;
         target.transform.rotation = respawnPoint.rotation;
 
-        // Wait one physics step to ensure Unity registers the new coordinates
         yield return new WaitForFixedUpdate();
 
-        // Restore velocity / state
         if (rb != null)
         {
             rb.position = respawnPoint.position;
@@ -77,10 +62,6 @@ public class VoidRespawn : MonoBehaviour
         }
 
         if (cc != null)
-        {
             cc.enabled = true;
-        }
-
-        Debug.Log("Teleport finished to: " + respawnPoint.position);
     }
 }
