@@ -19,7 +19,7 @@ namespace GamedevVFX
         {
             "Overview (All 3)",
             "VFX 1: Magical Girl Henshin (Sky Starfall)",
-            "VFX 2: Avatar Lightning Bending",
+            "VFX 2: Azula Blue Firebending",
             "VFX 3: Final Boss Auramaxxing"
         };
 
@@ -186,7 +186,7 @@ namespace GamedevVFX
 
             if (GUILayout.Button("[1] Play VFX 1 — Magical Girl Starfall", _buttonStyle, GUILayout.Height(26)))
                 PlayVFX1();
-            if (GUILayout.Button("[2] Play VFX 2 — Lightning Bending Strike", _buttonStyle, GUILayout.Height(26)))
+            if (GUILayout.Button("[2] Play VFX 2 — Azula Blue Flames", _buttonStyle, GUILayout.Height(26)))
                 PlayVFX2();
             bool bossOn = finalBossAuramaxxing != null && finalBossAuramaxxing.isPlaying;
             if (GUILayout.Button($"[3] Toggle VFX 3 — Boss Auramaxxing ({(bossOn ? "ON" : "OFF")})", _buttonStyle, GUILayout.Height(26)))

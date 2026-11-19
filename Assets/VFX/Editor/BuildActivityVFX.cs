@@ -11,11 +11,11 @@ using UnityEngine.SceneManagement;
 
 namespace GamedevVFX.Editor
 {
+    [InitializeOnLoad]
     public static class BuildActivityVFX
     {
         private const string TexBrackeysParticles = "Assets/VFX/Textures/Brackeys/Particles/";
         private const string TexBrackeysFlipbooks = "Assets/VFX/Textures/Brackeys/Flipbooks/";
-        private const string TexBrackeysPredrawn  = "Assets/VFX/Textures/Brackeys/Predrawn/";
         private const string TexKenney            = "Assets/VFX/Textures/Kenney/";
         private const string MatDir               = "Assets/VFX/Materials/";
         private const string PrefabDir            = "Assets/VFX/Prefabs/";
@@ -23,6 +23,18 @@ namespace GamedevVFX.Editor
         private const string ScenePath            = "Assets/Scenes/VFX_Showcase.unity";
 
         private static Mesh _cachedQuadMesh;
+
+        static BuildActivityVFX()
+        {
+            EditorApplication.delayCall += () =>
+            {
+                if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
+                if (!File.Exists(PrefabDir + "VFX_ElementalBending_AzulaBlueFlames.prefab"))
+                {
+                    BuildAll();
+                }
+            };
+        }
 
         [MenuItem("VFX Activity/Build All VFX Prefabs & Showcase Scene")]
         public static void BuildAll()
@@ -47,16 +59,16 @@ namespace GamedevVFX.Editor
             var matMGShockwave = CreateParticleMaterial(MatDir + "MAT_MG_Shockwave_Add.mat",      TexBrackeysParticles + "effect_02_a.png",        true,  1.10f, true,  1.8f);
             var matMGFlare     = CreateParticleMaterial(MatDir + "MAT_MG_Flare_Add.mat",          TexBrackeysParticles + "flare_01_a.png",         true,  1.35f, true,  1.2f);
 
-            // VFX 2: Avatar-Style Lightning Bending (Azula / Ozai Electric Blue-White Plasma)
-            var matLtCharge    = CreateParticleMaterial(MatDir + "MAT_Lt_ChargeOrb_Add.mat",      TexBrackeysParticles + "twirl_03_a.png",         true,  1.10f, false, 0.5f);
-            var matLtCoreGlow  = CreateParticleMaterial(MatDir + "MAT_Lt_CoreGlow_Add.mat",       TexBrackeysParticles + "circle_05_a.png",        true,  0.90f, true,  1.5f);
-            var matLtBoltBeam  = CreateParticleMaterial(MatDir + "MAT_Lt_BoltBeam_Add.mat",       TexBrackeysParticles + "spark_06_a.png",         true,  1.30f, true,  1.2f);
-            var matLtWebArc    = CreateParticleMaterial(MatDir + "MAT_Lt_WebArc_Add.mat",         TexBrackeysParticles + "spark_02_a.png",         true,  1.15f, true,  1.5f);
-            var matLtElecRing  = CreateParticleMaterial(MatDir + "MAT_Lt_ElectricRing_Add.mat",   TexBrackeysParticles + "circle_02_a.png",        true,  1.15f, false, 0.5f);
-            var matLtSpear     = CreateParticleMaterial(MatDir + "MAT_Lt_PlasmaSpear_Add.mat",    TexBrackeysParticles + "trace_03_a.png",         true,  1.35f, false, 0.5f);
-            var matLtSparks    = CreateParticleMaterial(MatDir + "MAT_Lt_Sparks_Add.mat",         TexBrackeysParticles + "star_07_a.png",          true,  1.35f, false, 0.5f);
-            var matLtZapSub    = CreateParticleMaterial(MatDir + "MAT_Lt_GroundZap_Add.mat",      TexBrackeysParticles + "scorch_02_a.png",        true,  1.25f, true,  0.8f);
-            var matLtOzoneMist = CreateParticleMaterial(MatDir + "MAT_Lt_OzoneMist_Alpha.mat",    TexBrackeysFlipbooks + "wispy_smoke_01_8x8.tga", false, 0.0f,  true,  2.2f);
+            // VFX 2: Azula Blue Firebending (Pure Blazing Cobalt-Cyan-White Flames, No Lightning)
+            var matBfVortex    = CreateParticleMaterial(MatDir + "MAT_BlueFire_PalmVortex_Add.mat",    TexBrackeysParticles + "twirl_03_a.png",         true,  1.15f, false, 0.5f);
+            var matBfHeatGlow  = CreateParticleMaterial(MatDir + "MAT_BlueFire_HeatGlow_Add.mat",      TexBrackeysParticles + "circle_05_a.png",        true,  0.95f, true,  1.5f);
+            var matBfCoreFlip  = CreateParticleMaterial(MatDir + "MAT_BlueFire_CoreFlipbook_Add.mat",  TexBrackeysFlipbooks + "wispy_smoke_01_8x8.tga", true,  1.35f, true,  1.2f);
+            var matBfPlume     = CreateParticleMaterial(MatDir + "MAT_BlueFire_FlamePlume_Add.mat",    TexBrackeysParticles + "flame_02_a.png",         true,  1.45f, true,  1.0f);
+            var matBfTongue    = CreateParticleMaterial(MatDir + "MAT_BlueFire_FlameTongue_Add.mat",   TexBrackeysParticles + "fire_02_a.png",          true,  1.30f, true,  1.2f);
+            var matBfHeatRing  = CreateParticleMaterial(MatDir + "MAT_BlueFire_HeatRing_Add.mat",      TexBrackeysParticles + "circle_02_a.png",        true,  1.10f, false, 0.5f);
+            var matBfEmbers    = CreateParticleMaterial(MatDir + "MAT_BlueFire_Embers_Add.mat",        TexBrackeysParticles + "flame_05_a.png",         true,  1.50f, false, 0.5f);
+            var matBfEmberPuff = CreateParticleMaterial(MatDir + "MAT_BlueFire_EmberSmoke_Alpha.mat",  TexBrackeysParticles + "smoke_04_a.png",         false, 0.0f,  true,  1.0f);
+            var matBfHeatSmoke = CreateParticleMaterial(MatDir + "MAT_BlueFire_HeatSmoke_Alpha.mat",   TexBrackeysFlipbooks + "wispy_smoke_01_8x8.tga", false, 0.0f,  true,  2.2f);
 
             // VFX 3: Colossal Final Boss "Auramaxxing"
             var matBossSmoke   = CreateParticleMaterial(MatDir + "MAT_Boss_AbyssSmoke_Alpha.mat", TexBrackeysFlipbooks + "cloud_01_8x8.tga",       false, 0.0f,  true,  2.2f);
@@ -75,9 +87,9 @@ namespace GamedevVFX.Editor
                 matMGSparkle, matMGStar5Pt, matMGCometHead, matMGCometTail,
                 matMGSubStar, matMGShockwave, matMGFlare);
 
-            GameObject prefab2 = BuildLightningBendingPrefab(
-                matLtCharge, matLtCoreGlow, matLtBoltBeam, matLtWebArc,
-                matLtElecRing, matLtSpear, matLtSparks, matLtZapSub, matLtOzoneMist);
+            GameObject prefab2 = BuildAzulaBlueFlamesPrefab(
+                matBfVortex, matBfHeatGlow, matBfCoreFlip, matBfPlume,
+                matBfTongue, matBfHeatRing, matBfEmbers, matBfEmberPuff, matBfHeatSmoke);
 
             GameObject prefab3 = BuildFinalBossAuramaxxingPrefab(
                 matBossSmoke, matBossSpikes, matBossBolt, matBossVertBlt,
@@ -88,7 +100,7 @@ namespace GamedevVFX.Editor
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("[BuildActivityVFX] Successfully built all colossal URP materials, 3 VFX prefabs (Starfall Magical Girl, Lightning Bending, Colossal Boss Auramaxxing), and VFX_Showcase.unity!");
+            Debug.Log("[BuildActivityVFX] Successfully built all colossal URP materials, 3 VFX prefabs (Starfall Magical Girl, Azula Blue Firebending, Colossal Boss Auramaxxing), and VFX_Showcase.unity!");
         }
 
         public static void BuildAndCaptureFromCLI()
@@ -829,35 +841,35 @@ namespace GamedevVFX.Editor
         }
 
         // =========================================================================
-        // VFX 2: MASSIVE AVATAR-STYLE LIGHTNING BENDING STRIKE
+        // VFX 2: AZULA BLUE FIREBENDING (PURE BLAZING BLUE FLAMES, NO LIGHTNING)
         // =========================================================================
-        private static GameObject BuildLightningBendingPrefab(
-            Material matCharge,
-            Material matCoreGlow,
-            Material matBoltBeam,
-            Material matWebArc,
-            Material matElecRing,
-            Material matSpear,
-            Material matSparks,
-            Material matZapSub,
-            Material matOzoneMist)
+        private static GameObject BuildAzulaBlueFlamesPrefab(
+            Material matVortex,
+            Material matHeatGlow,
+            Material matCoreFlip,
+            Material matPlume,
+            Material matTongue,
+            Material matHeatRing,
+            Material matEmbers,
+            Material matEmberPuff,
+            Material matHeatSmoke)
         {
-            GameObject root = CreateMasterController("VFX_ElementalBending_LightningStrike", 2.0f, false, false);
+            GameObject root = CreateMasterController("VFX_ElementalBending_AzulaBlueFlames", 2.2f, false, false);
 
-            // 1. PS_FingertipChargeOrb (Spinning electric yin-yang charge vortex right in front of fingertips)
-            var psCharge = CreateChildPS(root, "PS_FingertipChargeOrb", new Vector3(0f, 0f, 0.55f));
+            // 1. PS_PalmFireVortex (Spinning martial-arts fire ring right at Azula's palm)
+            var psVortex = CreateChildPS(root, "PS_PalmFireVortex", new Vector3(0f, 0f, 0.55f));
             {
-                var main = psCharge.main;
+                var main = psVortex.main;
                 main.duration = 0.55f;
                 main.loop = false;
-                main.startLifetime = 0.42f;
+                main.startLifetime = 0.45f;
                 main.startSpeed = 0f;
-                main.startSize = 3.8f;
+                main.startSize = 4.0f;
                 main.startRotation = new ParticleSystem.MinMaxCurve(0f, 360f * Mathf.Deg2Rad);
                 main.simulationSpace = ParticleSystemSimulationSpace.Local;
                 main.maxParticles = 6;
 
-                var em = psCharge.emission;
+                var em = psVortex.emission;
                 em.rateOverTime = 0f;
                 em.SetBursts(new[]
                 {
@@ -865,192 +877,290 @@ namespace GamedevVFX.Editor
                     new ParticleSystem.Burst(0.10f, 2)
                 });
 
-                var shape = psCharge.shape;
+                var shape = psVortex.shape;
                 shape.enabled = false;
 
-                var col = psCharge.colorOverLifetime;
+                var col = psVortex.colorOverLifetime;
                 col.enabled = true;
                 col.color = MakeGradient(
-                    new[] { (0.00f, Color.white), (0.32f, Hex("#00F0FF")), (0.75f, Hex("#1A6BFF")), (1.00f, Hex("#0A24A8")) },
-                    new[] { (0.00f, 1.00f), (0.35f, 0.90f), (1.00f, 0.00f) });
+                    new[] { (0.00f, Color.white), (0.28f, Hex("#00EAFF")), (0.72f, Hex("#0066FF")), (1.00f, Hex("#061878")) },
+                    new[] { (0.00f, 1.00f), (0.38f, 0.88f), (1.00f, 0.00f) });
 
-                var sol = psCharge.sizeOverLifetime;
+                var sol = psVortex.sizeOverLifetime;
                 sol.enabled = true;
-                sol.size = MakeCurve((0.00f, 0.25f), (0.30f, 1.05f), (1.00f, 1.35f));
+                sol.size = MakeCurve((0.00f, 0.25f), (0.30f, 1.05f), (1.00f, 1.38f));
 
-                var rol = psCharge.rotationOverLifetime;
+                var rol = psVortex.rotationOverLifetime;
                 rol.enabled = true;
-                rol.z = 540f * Mathf.Deg2Rad;
+                rol.z = 520f * Mathf.Deg2Rad;
 
-                var rend = psCharge.GetComponent<ParticleSystemRenderer>();
+                var rend = psVortex.GetComponent<ParticleSystemRenderer>();
                 rend.renderMode = ParticleSystemRenderMode.Mesh;
                 rend.mesh = GetBuiltinQuadMesh();
                 rend.alignment = ParticleSystemRenderSpace.Local;
-                rend.sharedMaterial = matCharge;
+                rend.sharedMaterial = matVortex;
                 rend.sortingFudge = -1.5f;
             }
 
-            // Core plasma glow orb at fingertips
-            var psCoreOrb = CreateChildPS(root, "PS_PlasmaMuzzleGlow", new Vector3(0f, 0f, 0.55f));
+            // 2. PS_PalmHeatGlow (White-hot blue fire bloom at the strike origin)
+            var psGlow = CreateChildPS(root, "PS_PalmHeatGlow", new Vector3(0f, 0f, 0.55f));
             {
-                var main = psCoreOrb.main;
-                main.duration = 0.65f;
+                var main = psGlow.main;
+                main.duration = 0.70f;
                 main.loop = false;
-                main.startLifetime = 0.55f;
+                main.startLifetime = 0.60f;
                 main.startSpeed = 0f;
-                main.startSize = 4.2f;
+                main.startSize = 4.8f;
                 main.simulationSpace = ParticleSystemSimulationSpace.Local;
                 main.maxParticles = 3;
 
-                var em = psCoreOrb.emission;
+                var em = psGlow.emission;
                 em.rateOverTime = 0f;
-                em.SetBursts(new[] { new ParticleSystem.Burst(0.00f, 1), new ParticleSystem.Burst(0.10f, 1) });
-                var shape = psCoreOrb.shape;
+                em.SetBursts(new[] { new ParticleSystem.Burst(0.00f, 1), new ParticleSystem.Burst(0.12f, 1) });
+                var shape = psGlow.shape;
                 shape.enabled = false;
 
-                var col = psCoreOrb.colorOverLifetime;
+                var col = psGlow.colorOverLifetime;
                 col.enabled = true;
                 col.color = MakeGradient(
-                    new[] { (0.00f, Hex("#E6FFFF")), (0.35f, Hex("#00EAFF")), (1.00f, Hex("#145CFF")) },
+                    new[] { (0.00f, Hex("#E8FFFF")), (0.32f, Hex("#00D8FF")), (1.00f, Hex("#0055FF")) },
                     new[] { (0.00f, 0.85f), (0.30f, 0.65f), (1.00f, 0.00f) });
 
-                var sol = psCoreOrb.sizeOverLifetime;
+                var sol = psGlow.sizeOverLifetime;
                 sol.enabled = true;
-                sol.size = MakeCurve((0.00f, 0.30f), (0.20f, 1.05f), (1.00f, 0.45f));
+                sol.size = MakeCurve((0.00f, 0.30f), (0.22f, 1.08f), (1.00f, 0.45f));
 
-                var rend = psCoreOrb.GetComponent<ParticleSystemRenderer>();
+                var rend = psGlow.GetComponent<ParticleSystemRenderer>();
                 rend.renderMode = ParticleSystemRenderMode.Billboard;
-                rend.sharedMaterial = matCoreGlow;
+                rend.sharedMaterial = matHeatGlow;
                 rend.sortingFudge = 0.5f;
             }
 
-            // 2. PS_LightningBoltStream (Crisp individual jagged lightning forks shooting 15m strictly ahead of fingertips!)
-            var psBeam = CreateChildPS(root, "PS_LightningBoltStream", new Vector3(0f, 0f, 2.4f));
+            // 3. PS_BlueFireFlipbookCore (Roaring animated 8x8 grayscale flipbook tinted pure Azula blue-white!)
+            var psFireCore = CreateChildPS(root, "PS_BlueFireFlipbookCore", new Vector3(0f, 0f, 0.85f));
             {
-                var main = psBeam.main;
-                main.duration = 0.65f;
-                main.loop = false;
-                main.startLifetime = new ParticleSystem.MinMaxCurve(0.28f, 0.46f);
-                main.startSpeed = new ParticleSystem.MinMaxCurve(26.0f, 38.0f);
-                main.startSize = new ParticleSystem.MinMaxCurve(1.4f, 2.5f);
-                main.flipRotation = 0.5f;
-                main.simulationSpace = ParticleSystemSimulationSpace.World;
-                main.maxParticles = 45;
-
-                var em = psBeam.emission;
-                em.rateOverTime = 30f;
-                em.SetBursts(new[]
-                {
-                    new ParticleSystem.Burst(0.02f, 5),
-                    new ParticleSystem.Burst(0.16f, 6),
-                    new ParticleSystem.Burst(0.32f, 5)
-                });
-
-                var shape = psBeam.shape;
-                shape.enabled = true;
-                shape.shapeType = ParticleSystemShapeType.Cone;
-                shape.angle = 6f;
-                shape.radius = 0.30f;
-                shape.rotation = Vector3.zero;
-
-                var noise = psBeam.noise;
-                noise.enabled = true;
-                noise.strength = 3.8f;
-                noise.frequency = 2.6f;
-                noise.scrollSpeed = 4.5f;
-
-                var col = psBeam.colorOverLifetime;
-                col.enabled = true;
-                col.color = MakeGradient(
-                    new[] { (0.00f, Hex("#FFFFFF")), (0.25f, Hex("#00EAFF")), (0.68f, Hex("#1464FF")), (1.00f, Hex("#0B26A8")) },
-                    new[] { (0.00f, 1.00f), (0.65f, 0.92f), (1.00f, 0.00f) });
-
-                var sol = psBeam.sizeOverLifetime;
-                sol.enabled = true;
-                sol.size = MakeCurve((0.00f, 0.65f), (0.25f, 1.15f), (1.00f, 0.40f));
-
-                var rend = psBeam.GetComponent<ParticleSystemRenderer>();
-                rend.renderMode = ParticleSystemRenderMode.Stretch;
-                rend.cameraVelocityScale = 0f;
-                rend.velocityScale = 0.06f;
-                rend.lengthScale = 1.6f;
-                rend.sharedMaterial = matBoltBeam;
-                rend.sortingFudge = -2.5f;
-            }
-
-            // 3. PS_BranchingPlasmaArcs (Jagged branching electric webs cracking along the 14m discharge!)
-            var psArcs = CreateChildPS(root, "PS_BranchingPlasmaArcs", new Vector3(0f, 0f, 2.0f));
-            {
-                var main = psArcs.main;
+                var main = psFireCore.main;
                 main.duration = 0.70f;
                 main.loop = false;
-                main.startLifetime = new ParticleSystem.MinMaxCurve(0.24f, 0.42f);
+                main.startLifetime = new ParticleSystem.MinMaxCurve(0.55f, 0.90f);
                 main.startSpeed = new ParticleSystem.MinMaxCurve(22.0f, 34.0f);
-                main.startSize = new ParticleSystem.MinMaxCurve(2.8f, 4.8f);
+                main.startSize = new ParticleSystem.MinMaxCurve(2.6f, 4.8f);
                 main.startRotation = new ParticleSystem.MinMaxCurve(0f, 360f * Mathf.Deg2Rad);
-                main.flipRotation = 0.5f;
                 main.simulationSpace = ParticleSystemSimulationSpace.World;
-                main.maxParticles = 32;
+                main.maxParticles = 75;
 
-                var em = psArcs.emission;
-                em.rateOverTime = 24f;
+                var em = psFireCore.emission;
+                em.rateOverTime = 82f;
                 em.SetBursts(new[]
                 {
-                    new ParticleSystem.Burst(0.03f, 4),
-                    new ParticleSystem.Burst(0.18f, 5),
-                    new ParticleSystem.Burst(0.35f, 4)
+                    new ParticleSystem.Burst(0.02f, 12),
+                    new ParticleSystem.Burst(0.16f, 12)
                 });
 
-                var shape = psArcs.shape;
+                var shape = psFireCore.shape;
                 shape.enabled = true;
                 shape.shapeType = ParticleSystemShapeType.Cone;
                 shape.angle = 9.5f;
-                shape.radius = 0.45f;
+                shape.radius = 0.35f;
                 shape.rotation = Vector3.zero;
 
-                var noise = psArcs.noise;
-                noise.enabled = true;
-                noise.strength = 3.6f;
-                noise.frequency = 1.6f;
-                noise.scrollSpeed = 3.5f;
+                var vel = psFireCore.velocityOverLifetime;
+                vel.enabled = true;
+                vel.space = ParticleSystemSimulationSpace.Local;
+                vel.x = 0f;
+                vel.y = 1.2f; // Natural heat lift as blue flames roar outward
+                vel.z = 0f;
 
-                var col = psArcs.colorOverLifetime;
+                var limitVel = psFireCore.limitVelocityOverLifetime;
+                limitVel.enabled = true;
+                limitVel.drag = 1.35f;
+                limitVel.multiplyDragByParticleSize = false;
+                limitVel.multiplyDragByParticleVelocity = false; // Linear drag lets the flame jet travel 13-15m forward!
+
+                var noise = psFireCore.noise;
+                noise.enabled = true;
+                noise.strength = 2.0f;
+                noise.frequency = 0.95f;
+                noise.scrollSpeed = 1.8f;
+
+                var col = psFireCore.colorOverLifetime;
                 col.enabled = true;
                 col.color = MakeGradient(
-                    new[] { (0.00f, Hex("#D8FFFF")), (0.30f, Hex("#00D4FF")), (0.72f, Hex("#145CFF")), (1.00f, Hex("#0B2088")) },
-                    new[] { (0.00f, 0.92f), (0.55f, 0.80f), (1.00f, 0.00f) });
+                    new[] { (0.00f, Color.white), (0.24f, Hex("#40F0FF")), (0.62f, Hex("#0077FF")), (1.00f, Hex("#0A1D88")) },
+                    new[] { (0.00f, 0.00f), (0.10f, 0.95f), (0.68f, 0.78f), (1.00f, 0.00f) });
 
-                var sol = psArcs.sizeOverLifetime;
+                var sol = psFireCore.sizeOverLifetime;
                 sol.enabled = true;
-                sol.size = MakeCurve((0.00f, 0.55f), (0.28f, 1.12f), (1.00f, 0.85f));
+                sol.size = MakeCurve((0.00f, 0.38f), (0.35f, 1.05f), (1.00f, 1.55f));
 
-                var rend = psArcs.GetComponent<ParticleSystemRenderer>();
+                var rol = psFireCore.rotationOverLifetime;
+                rol.enabled = true;
+                rol.z = new ParticleSystem.MinMaxCurve(-110f * Mathf.Deg2Rad, 110f * Mathf.Deg2Rad);
+
+                var tsa = psFireCore.textureSheetAnimation;
+                tsa.enabled = true;
+                tsa.mode = ParticleSystemAnimationMode.Grid;
+                tsa.numTilesX = 8;
+                tsa.numTilesY = 8;
+                tsa.animation = ParticleSystemAnimationType.WholeSheet;
+                tsa.timeMode = ParticleSystemAnimationTimeMode.Lifetime;
+                tsa.frameOverTime = MakeCurve((0f, 0f), (1f, 1f));
+                tsa.startFrame = new ParticleSystem.MinMaxCurve(0f, 16f / 64f);
+                tsa.cycleCount = 1;
+
+                var rend = psFireCore.GetComponent<ParticleSystemRenderer>();
                 rend.renderMode = ParticleSystemRenderMode.Billboard;
-                rend.sharedMaterial = matWebArc;
-                rend.sortingFudge = -2.0f;
+                rend.sharedMaterial = matCoreFlip;
+                rend.sortingFudge = -1.0f;
             }
 
-            // 4. PS_ElectricCompressionRings (Cone Angle 0 -> fires DEAD STRAIGHT down +Z around the lightning beam!)
-            var psRings = CreateChildPS(root, "PS_ElectricCompressionRings", new Vector3(0f, 0f, 0.9f));
+            // 4. PS_StylizedFlamePlumes (Painterly Avatar-style blue flame licks corkscrewing down the jet)
+            var psPlumes = CreateChildPS(root, "PS_StylizedFlamePlumes", new Vector3(0f, 0f, 1.5f));
+            {
+                var main = psPlumes.main;
+                main.duration = 0.70f;
+                main.loop = false;
+                main.startLifetime = new ParticleSystem.MinMaxCurve(0.38f, 0.65f);
+                main.startSpeed = new ParticleSystem.MinMaxCurve(25.0f, 38.0f);
+                main.startSize = new ParticleSystem.MinMaxCurve(1.1f, 2.2f);
+                main.flipRotation = 0.5f;
+                main.simulationSpace = ParticleSystemSimulationSpace.World;
+                main.maxParticles = 85;
+
+                var em = psPlumes.emission;
+                em.rateOverTime = 88f;
+                em.SetBursts(new[] { new ParticleSystem.Burst(0.02f, 14) });
+
+                var shape = psPlumes.shape;
+                shape.enabled = true;
+                shape.shapeType = ParticleSystemShapeType.Cone;
+                shape.angle = 11f;
+                shape.radius = 0.40f;
+                shape.rotation = Vector3.zero;
+
+                var vel = psPlumes.velocityOverLifetime;
+                vel.enabled = true;
+                vel.space = ParticleSystemSimulationSpace.Local;
+                vel.x = 0f;
+                vel.y = 0.9f;
+                vel.z = 0f;
+                vel.orbitalX = 0f;
+                vel.orbitalY = 0f;
+                vel.orbitalZ = 3.4f; // Spiraling anime flame ribbons
+
+                var limitVel = psPlumes.limitVelocityOverLifetime;
+                limitVel.enabled = true;
+                limitVel.drag = 1.25f;
+                limitVel.multiplyDragByParticleSize = false;
+                limitVel.multiplyDragByParticleVelocity = false;
+
+                var col = psPlumes.colorOverLifetime;
+                col.enabled = true;
+                col.color = MakeGradient(
+                    new[] { (0.00f, Hex("#E8FFFF")), (0.28f, Hex("#00E5FF")), (0.68f, Hex("#0066FF")), (1.00f, Hex("#071A78")) },
+                    new[] { (0.00f, 0.00f), (0.14f, 0.96f), (0.68f, 0.78f), (1.00f, 0.00f) });
+
+                var sol = psPlumes.sizeOverLifetime;
+                sol.enabled = true;
+                sol.size = MakeCurve((0.00f, 0.35f), (0.28f, 1.08f), (1.00f, 0.18f));
+
+                var rend = psPlumes.GetComponent<ParticleSystemRenderer>();
+                rend.renderMode = ParticleSystemRenderMode.Stretch;
+                rend.cameraVelocityScale = 0f;
+                rend.velocityScale = 0.05f;
+                rend.lengthScale = 1.85f;
+                rend.sharedMaterial = matPlume;
+                rend.sortingFudge = -2.2f;
+            }
+
+            // 5. PS_BlazingFlameTongues (Textured incandescent blue fire bursts along the stream body)
+            var psTongues = CreateChildPS(root, "PS_BlazingFlameTongues", new Vector3(0f, 0f, 1.1f));
+            {
+                var main = psTongues.main;
+                main.duration = 0.68f;
+                main.loop = false;
+                main.startLifetime = new ParticleSystem.MinMaxCurve(0.42f, 0.72f);
+                main.startSpeed = new ParticleSystem.MinMaxCurve(20.0f, 32.0f);
+                main.startSize = new ParticleSystem.MinMaxCurve(2.2f, 4.2f);
+                main.startRotation = new ParticleSystem.MinMaxCurve(0f, 360f * Mathf.Deg2Rad);
+                main.flipRotation = 0.5f;
+                main.simulationSpace = ParticleSystemSimulationSpace.World;
+                main.maxParticles = 55;
+
+                var em = psTongues.emission;
+                em.rateOverTime = 56f;
+                em.SetBursts(new[]
+                {
+                    new ParticleSystem.Burst(0.03f, 8),
+                    new ParticleSystem.Burst(0.20f, 8)
+                });
+
+                var shape = psTongues.shape;
+                shape.enabled = true;
+                shape.shapeType = ParticleSystemShapeType.Cone;
+                shape.angle = 10f;
+                shape.radius = 0.38f;
+                shape.rotation = Vector3.zero;
+
+                var vel = psTongues.velocityOverLifetime;
+                vel.enabled = true;
+                vel.space = ParticleSystemSimulationSpace.Local;
+                vel.x = 0f;
+                vel.y = 1.4f;
+                vel.z = 0f;
+
+                var limitVel = psTongues.limitVelocityOverLifetime;
+                limitVel.enabled = true;
+                limitVel.drag = 1.4f;
+                limitVel.multiplyDragByParticleSize = false;
+                limitVel.multiplyDragByParticleVelocity = false;
+
+                var noise = psTongues.noise;
+                noise.enabled = true;
+                noise.strength = 1.8f;
+                noise.frequency = 1.2f;
+                noise.scrollSpeed = 2.0f;
+
+                var col = psTongues.colorOverLifetime;
+                col.enabled = true;
+                col.color = MakeGradient(
+                    new[] { (0.00f, Color.white), (0.26f, Hex("#00DCFF")), (0.65f, Hex("#0055FF")), (1.00f, Hex("#061466")) },
+                    new[] { (0.00f, 0.00f), (0.12f, 0.92f), (0.65f, 0.72f), (1.00f, 0.00f) });
+
+                var sol = psTongues.sizeOverLifetime;
+                sol.enabled = true;
+                sol.size = MakeCurve((0.00f, 0.45f), (0.30f, 1.05f), (1.00f, 1.35f));
+
+                var rol = psTongues.rotationOverLifetime;
+                rol.enabled = true;
+                rol.z = new ParticleSystem.MinMaxCurve(-180f * Mathf.Deg2Rad, 180f * Mathf.Deg2Rad);
+
+                var rend = psTongues.GetComponent<ParticleSystemRenderer>();
+                rend.renderMode = ParticleSystemRenderMode.Billboard;
+                rend.sharedMaterial = matTongue;
+                rend.sortingFudge = -1.8f;
+            }
+
+            // 6. PS_HeatWaveRings (Expanding blue fire pressure rings surging straight along +Z)
+            var psRings = CreateChildPS(root, "PS_HeatWaveRings", new Vector3(0f, 0f, 0.9f));
             {
                 var main = psRings.main;
                 main.duration = 0.60f;
                 main.loop = false;
                 main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 0.58f);
-                main.startSpeed = new ParticleSystem.MinMaxCurve(20.0f, 28.0f);
-                main.startSize = new ParticleSystem.MinMaxCurve(3.6f, 5.8f);
+                main.startSpeed = new ParticleSystem.MinMaxCurve(18.0f, 26.0f);
+                main.startSize = new ParticleSystem.MinMaxCurve(3.4f, 5.6f);
                 main.startRotation = new ParticleSystem.MinMaxCurve(0f, 360f * Mathf.Deg2Rad);
                 main.simulationSpace = ParticleSystemSimulationSpace.World;
-                main.maxParticles = 14;
+                main.maxParticles = 10;
 
                 var em = psRings.emission;
                 em.rateOverTime = 0f;
                 em.SetBursts(new[]
                 {
                     new ParticleSystem.Burst(0.02f, 1),
-                    new ParticleSystem.Burst(0.11f, 1),
-                    new ParticleSystem.Burst(0.20f, 1),
-                    new ParticleSystem.Burst(0.30f, 1),
+                    new ParticleSystem.Burst(0.14f, 1),
+                    new ParticleSystem.Burst(0.28f, 1),
                     new ParticleSystem.Burst(0.42f, 1)
                 });
 
@@ -1064,8 +1174,8 @@ namespace GamedevVFX.Editor
                 var col = psRings.colorOverLifetime;
                 col.enabled = true;
                 col.color = MakeGradient(
-                    new[] { (0.00f, Hex("#E6FFFF")), (0.45f, Hex("#00EAFF")), (1.00f, Hex("#1A6BFF")) },
-                    new[] { (0.00f, 0.00f), (0.12f, 0.92f), (0.72f, 0.70f), (1.00f, 0.00f) });
+                    new[] { (0.00f, Hex("#E6FFFF")), (0.42f, Hex("#00D8FF")), (1.00f, Hex("#0055FF")) },
+                    new[] { (0.00f, 0.00f), (0.14f, 0.78f), (0.70f, 0.55f), (1.00f, 0.00f) });
 
                 var sol = psRings.sizeOverLifetime;
                 sol.enabled = true;
@@ -1075,220 +1185,178 @@ namespace GamedevVFX.Editor
                 rend.renderMode = ParticleSystemRenderMode.Mesh;
                 rend.mesh = GetBuiltinQuadMesh();
                 rend.alignment = ParticleSystemRenderSpace.Local;
-                rend.sharedMaterial = matElecRing;
-                rend.sortingFudge = -1.2f;
+                rend.sharedMaterial = matHeatRing;
+                rend.sortingFudge = -0.8f;
             }
 
-            // 5. PS_PlasmaSpearStreaks (Razor-sharp helical lightning lances starting cleanly ahead of fingertips!)
-            var psSpears = CreateChildPS(root, "PS_PlasmaSpearStreaks", new Vector3(0f, 0f, 2.2f));
+            // 7. PS_BlueFireEmbers + Sub-Emitter PS_Sub_EmberPuff (Glowing blue flame cinders & smoke puffs on bounce)
+            var psEmbers = CreateChildPS(root, "PS_BlueFireEmbers", new Vector3(0f, -0.10f, 0.8f));
+            var psSubPuff = CreateChildPS(psEmbers.gameObject, "PS_Sub_EmberPuff", Vector3.zero);
             {
-                var main = psSpears.main;
-                main.duration = 0.65f;
-                main.loop = false;
-                main.startLifetime = new ParticleSystem.MinMaxCurve(0.28f, 0.46f);
-                main.startSpeed = new ParticleSystem.MinMaxCurve(28.0f, 42.0f);
-                main.startSize = new ParticleSystem.MinMaxCurve(0.45f, 0.90f);
-                main.simulationSpace = ParticleSystemSimulationSpace.World;
-                main.maxParticles = 60;
-
-                var em = psSpears.emission;
-                em.rateOverTime = 52f;
-                em.SetBursts(new[] { new ParticleSystem.Burst(0.02f, 10) });
-
-                var shape = psSpears.shape;
-                shape.enabled = true;
-                shape.shapeType = ParticleSystemShapeType.Cone;
-                shape.angle = 7.5f;
-                shape.radius = 0.35f;
-                shape.rotation = Vector3.zero;
-
-                var vel = psSpears.velocityOverLifetime;
-                vel.enabled = true;
-                vel.space = ParticleSystemSimulationSpace.Local;
-                vel.x = 0f;
-                vel.y = 0f;
-                vel.z = 0f;
-                vel.orbitalX = 0f;
-                vel.orbitalY = 0f;
-                vel.orbitalZ = 3.8f;
-
-                var col = psSpears.colorOverLifetime;
-                col.enabled = true;
-                col.color = MakeGradient(
-                    new[] { (0.00f, Color.white), (0.35f, Hex("#00F0FF")), (0.80f, Hex("#1F6BFF")), (1.00f, Hex("#0C2080")) },
-                    new[] { (0.00f, 0.00f), (0.12f, 1.00f), (0.70f, 0.85f), (1.00f, 0.00f) });
-
-                var sol = psSpears.sizeOverLifetime;
-                sol.enabled = true;
-                sol.size = MakeCurve((0.00f, 0.40f), (0.25f, 1.05f), (1.00f, 0.10f));
-
-                var rend = psSpears.GetComponent<ParticleSystemRenderer>();
-                rend.renderMode = ParticleSystemRenderMode.Stretch;
-                rend.cameraVelocityScale = 0f;
-                rend.velocityScale = 0.06f;
-                rend.lengthScale = 2.0f;
-                rend.sharedMaterial = matSpear;
-                rend.sortingFudge = -2.8f;
-            }
-
-            // 6. PS_GroundRicochetSparks + Sub-Emitter PS_Sub_GroundZap (Gravity + Floor Bounce + Electric Impact Flash!)
-            var psSparks = CreateChildPS(root, "PS_GroundRicochetSparks", new Vector3(0f, -0.15f, 0.8f));
-            var psSubZap = CreateChildPS(psSparks.gameObject, "PS_Sub_GroundZap", Vector3.zero);
-            {
-                var sMain = psSubZap.main;
-                sMain.duration = 0.35f;
+                var sMain = psSubPuff.main;
+                sMain.duration = 0.45f;
                 sMain.loop = false;
                 sMain.playOnAwake = false;
-                sMain.startLifetime = new ParticleSystem.MinMaxCurve(0.18f, 0.30f);
-                sMain.startSpeed = 0f;
-                sMain.startSize = new ParticleSystem.MinMaxCurve(1.4f, 2.6f);
+                sMain.startLifetime = new ParticleSystem.MinMaxCurve(0.40f, 0.65f);
+                sMain.startSpeed = new ParticleSystem.MinMaxCurve(0.6f, 1.6f);
+                sMain.startSize = new ParticleSystem.MinMaxCurve(0.9f, 1.6f);
                 sMain.startRotation = new ParticleSystem.MinMaxCurve(0f, 360f * Mathf.Deg2Rad);
                 sMain.simulationSpace = ParticleSystemSimulationSpace.World;
-                sMain.maxParticles = 60;
+                sMain.maxParticles = 50;
 
-                var sEm = psSubZap.emission;
+                var sEm = psSubPuff.emission;
                 sEm.rateOverTime = 0f;
                 sEm.SetBursts(new[] { new ParticleSystem.Burst(0.0f, 1) });
-                var sShape = psSubZap.shape;
-                sShape.enabled = false;
 
-                var sCol = psSubZap.colorOverLifetime;
+                var sShape = psSubPuff.shape;
+                sShape.enabled = true;
+                sShape.shapeType = ParticleSystemShapeType.Hemisphere;
+                sShape.radius = 0.20f;
+                sShape.rotation = new Vector3(-90f, 0f, 0f);
+
+                var sCol = psSubPuff.colorOverLifetime;
                 sCol.enabled = true;
                 sCol.color = MakeGradient(
-                    new[] { (0.00f, Color.white), (0.35f, Hex("#00EAFF")), (1.00f, Hex("#1A5CFF")) },
-                    new[] { (0.00f, 1.00f), (0.50f, 0.85f), (1.00f, 0.00f) });
+                    new[] { (0.00f, Hex("#52B8FF")), (0.50f, Hex("#1A3566")), (1.00f, Hex("#0A1024")) },
+                    new[] { (0.00f, 0.50f), (1.00f, 0.00f) });
 
-                var sSol = psSubZap.sizeOverLifetime;
+                var sSol = psSubPuff.sizeOverLifetime;
                 sSol.enabled = true;
-                sSol.size = MakeCurve((0.00f, 0.35f), (0.25f, 1.05f), (1.00f, 1.35f));
+                sSol.size = MakeCurve((0.00f, 0.45f), (1.00f, 1.65f));
 
-                var sRend = psSubZap.GetComponent<ParticleSystemRenderer>();
-                sRend.renderMode = ParticleSystemRenderMode.HorizontalBillboard;
-                sRend.sharedMaterial = matZapSub;
-                sRend.sortingFudge = -1.5f;
+                var sRend = psSubPuff.GetComponent<ParticleSystemRenderer>();
+                sRend.renderMode = ParticleSystemRenderMode.Billboard;
+                sRend.sharedMaterial = matEmberPuff;
+                sRend.sortingFudge = 1.0f;
             }
             {
-                var main = psSparks.main;
-                main.duration = 0.65f;
+                var main = psEmbers.main;
+                main.duration = 0.72f;
                 main.loop = false;
-                main.startLifetime = new ParticleSystem.MinMaxCurve(0.75f, 1.35f);
+                main.startLifetime = new ParticleSystem.MinMaxCurve(0.85f, 1.55f);
                 main.startSpeed = new ParticleSystem.MinMaxCurve(14.0f, 28.0f);
-                main.startSize = new ParticleSystem.MinMaxCurve(0.32f, 0.72f);
+                main.startSize = new ParticleSystem.MinMaxCurve(0.32f, 0.75f);
                 main.startRotation = new ParticleSystem.MinMaxCurve(0f, 360f * Mathf.Deg2Rad);
-                main.startColor = MakeRandomPalette(Color.white, Hex("#00F0FF"), Hex("#4DA6FF"));
-                main.gravityModifier = 2.0f;
+                main.startColor = MakeRandomPalette(Color.white, Hex("#40F0FF"), Hex("#0088FF"));
+                main.gravityModifier = 0.75f;
                 main.simulationSpace = ParticleSystemSimulationSpace.World;
                 main.maxParticles = 110;
 
-                var em = psSparks.emission;
-                em.rateOverTime = 65f;
+                var em = psEmbers.emission;
+                em.rateOverTime = 70f;
                 em.SetBursts(new[]
                 {
-                    new ParticleSystem.Burst(0.03f, 32),
-                    new ParticleSystem.Burst(0.18f, 24)
+                    new ParticleSystem.Burst(0.03f, 24),
+                    new ParticleSystem.Burst(0.20f, 18)
                 });
 
-                var shape = psSparks.shape;
+                var shape = psEmbers.shape;
                 shape.enabled = true;
                 shape.shapeType = ParticleSystemShapeType.Cone;
-                shape.angle = 22f;
+                shape.angle = 20f;
                 shape.radius = 0.55f;
                 shape.rotation = new Vector3(-6f, 0f, 0f);
 
-                var col = psSparks.colorOverLifetime;
+                var noise = psEmbers.noise;
+                noise.enabled = true;
+                noise.strength = 2.0f;
+                noise.frequency = 1.2f;
+                noise.scrollSpeed = 1.5f;
+
+                var col = psEmbers.colorOverLifetime;
                 col.enabled = true;
                 col.color = MakeGradient(
-                    new[] { (0.00f, Color.white), (0.60f, Hex("#00EAFF")), (1.00f, Hex("#145CFF")) },
+                    new[] { (0.00f, Color.white), (0.45f, Hex("#00EAFF")), (1.00f, Hex("#0044CC")) },
                     new[] { (0.00f, 1.00f), (0.75f, 0.90f), (1.00f, 0.00f) });
 
-                var sol = psSparks.sizeOverLifetime;
+                var sol = psEmbers.sizeOverLifetime;
                 sol.enabled = true;
-                sol.size = MakeCurve((0.00f, 0.60f), (0.15f, 1.00f), (1.00f, 0.00f));
+                sol.size = MakeCurve((0.00f, 0.50f), (0.18f, 1.00f), (1.00f, 0.00f));
 
-                var coll = psSparks.collision;
+                var coll = psEmbers.collision;
                 coll.enabled = true;
                 coll.type = ParticleSystemCollisionType.World;
                 coll.mode = ParticleSystemCollisionMode.Collision3D;
-                coll.bounce = 0.52f;
-                coll.dampen = 0.30f;
-                coll.lifetimeLoss = 0.20f;
+                coll.bounce = 0.45f;
+                coll.dampen = 0.35f;
+                coll.lifetimeLoss = 0.25f;
                 coll.radiusScale = 0.5f;
 
-                var sub = psSparks.subEmitters;
+                var sub = psEmbers.subEmitters;
                 sub.enabled = true;
-                sub.AddSubEmitter(psSubZap, ParticleSystemSubEmitterType.Collision, ParticleSystemSubEmitterProperties.InheritNothing, 0.55f);
+                sub.AddSubEmitter(psSubPuff, ParticleSystemSubEmitterType.Collision, ParticleSystemSubEmitterProperties.InheritNothing, 0.45f);
 
-                var rend = psSparks.GetComponent<ParticleSystemRenderer>();
+                var rend = psEmbers.GetComponent<ParticleSystemRenderer>();
                 rend.renderMode = ParticleSystemRenderMode.Stretch;
                 rend.cameraVelocityScale = 0f;
-                rend.velocityScale = 0.08f;
-                rend.lengthScale = 2.0f;
-                rend.sharedMaterial = matSparks;
-                rend.sortingFudge = -2.2f;
+                rend.velocityScale = 0.05f;
+                rend.lengthScale = 1.6f;
+                rend.sharedMaterial = matEmbers;
+                rend.sortingFudge = -2.4f;
             }
 
-            // 7. PS_IonizedOzoneMist (Huge swirling electric-blue vapor clouds trailing behind the lightning surge)
-            var psMist = CreateChildPS(root, "PS_IonizedOzoneMist", new Vector3(0f, 0f, 0.8f));
+            // 8. PS_DarkBlueHeatSmoke (Swirling dark cobalt-slate heat smoke rising behind the blue flames)
+            var psSmoke = CreateChildPS(root, "PS_DarkBlueHeatSmoke", new Vector3(0f, 0.1f, 0.9f));
             {
-                var main = psMist.main;
-                main.duration = 0.70f;
+                var main = psSmoke.main;
+                main.duration = 0.75f;
                 main.loop = false;
-                main.startDelay = 0.04f;
-                main.startLifetime = new ParticleSystem.MinMaxCurve(0.85f, 1.45f);
+                main.startDelay = 0.06f;
+                main.startLifetime = new ParticleSystem.MinMaxCurve(0.95f, 1.60f);
                 main.startSpeed = new ParticleSystem.MinMaxCurve(14.0f, 24.0f);
-                main.startSize = new ParticleSystem.MinMaxCurve(2.6f, 4.8f);
+                main.startSize = new ParticleSystem.MinMaxCurve(2.8f, 5.2f);
                 main.startRotation = new ParticleSystem.MinMaxCurve(0f, 360f * Mathf.Deg2Rad);
                 main.simulationSpace = ParticleSystemSimulationSpace.World;
                 main.maxParticles = 55;
 
-                var em = psMist.emission;
-                em.rateOverTime = 60f;
-                em.SetBursts(new[] { new ParticleSystem.Burst(0.05f, 14) });
+                var em = psSmoke.emission;
+                em.rateOverTime = 55f;
+                em.SetBursts(new[] { new ParticleSystem.Burst(0.06f, 12) });
 
-                var shape = psMist.shape;
+                var shape = psSmoke.shape;
                 shape.enabled = true;
                 shape.shapeType = ParticleSystemShapeType.Cone;
                 shape.angle = 20f;
                 shape.radius = 0.65f;
                 shape.rotation = Vector3.zero;
 
-                var vel = psMist.velocityOverLifetime;
+                var vel = psSmoke.velocityOverLifetime;
                 vel.enabled = true;
                 vel.space = ParticleSystemSimulationSpace.Local;
                 vel.x = 0f;
-                vel.y = 0.85f;
+                vel.y = 1.6f;
                 vel.z = 0f;
                 vel.orbitalX = 0f;
                 vel.orbitalY = 0f;
-                vel.orbitalZ = 2.6f;
+                vel.orbitalZ = 2.4f;
 
-                var limitVel = psMist.limitVelocityOverLifetime;
+                var limitVel = psSmoke.limitVelocityOverLifetime;
                 limitVel.enabled = true;
                 limitVel.drag = 1.6f;
                 limitVel.multiplyDragByParticleSize = false;
-                limitVel.multiplyDragByParticleVelocity = false; // Linear drag so ozone mist travels 8-10m down the lightning wake!
+                limitVel.multiplyDragByParticleVelocity = false;
 
-                var noise = psMist.noise;
+                var noise = psSmoke.noise;
                 noise.enabled = true;
-                noise.strength = 1.1f;
+                noise.strength = 1.2f;
                 noise.frequency = 0.65f;
                 noise.scrollSpeed = 0.65f;
 
-                var col = psMist.colorOverLifetime;
+                var col = psSmoke.colorOverLifetime;
                 col.enabled = true;
                 col.color = MakeGradient(
-                    new[] { (0.00f, Hex("#99F3FF")), (0.40f, Hex("#2063B8")), (1.00f, Hex("#0B1B3B")) },
+                    new[] { (0.00f, Hex("#4DB8FF")), (0.40f, Hex("#162E5C")), (1.00f, Hex("#0A1024")) },
                     new[] { (0.00f, 0.00f), (0.18f, 0.56f), (0.65f, 0.36f), (1.00f, 0.00f) });
 
-                var sol = psMist.sizeOverLifetime;
+                var sol = psSmoke.sizeOverLifetime;
                 sol.enabled = true;
-                sol.size = MakeCurve((0.00f, 0.45f), (1.00f, 1.85f));
+                sol.size = MakeCurve((0.00f, 0.45f), (1.00f, 1.90f));
 
-                var rol = psMist.rotationOverLifetime;
+                var rol = psSmoke.rotationOverLifetime;
                 rol.enabled = true;
                 rol.z = new ParticleSystem.MinMaxCurve(-80f * Mathf.Deg2Rad, 80f * Mathf.Deg2Rad);
 
-                var tsa = psMist.textureSheetAnimation;
+                var tsa = psSmoke.textureSheetAnimation;
                 tsa.enabled = true;
                 tsa.mode = ParticleSystemAnimationMode.Grid;
                 tsa.numTilesX = 8;
@@ -1299,13 +1367,13 @@ namespace GamedevVFX.Editor
                 tsa.startFrame = new ParticleSystem.MinMaxCurve(0f, 16f / 64f);
                 tsa.cycleCount = 1;
 
-                var rend = psMist.GetComponent<ParticleSystemRenderer>();
+                var rend = psSmoke.GetComponent<ParticleSystemRenderer>();
                 rend.renderMode = ParticleSystemRenderMode.Billboard;
-                rend.sharedMaterial = matOzoneMist;
+                rend.sharedMaterial = matHeatSmoke;
                 rend.sortingFudge = 2.0f;
             }
 
-            return SaveAndDestroyPrefab(root, PrefabDir + "VFX_ElementalBending_LightningStrike.prefab");
+            return SaveAndDestroyPrefab(root, PrefabDir + "VFX_ElementalBending_AzulaBlueFlames.prefab");
         }
 
         // =========================================================================
@@ -1734,12 +1802,12 @@ namespace GamedevVFX.Editor
             GameObject inst1 = (GameObject)PrefabUtility.InstantiatePrefab(prefab1);
             inst1.transform.position = pos1;
 
-            // --- Stage 2 (Center, X = -6): Massive Avatar Lightning Bending (shoots 14m across center-front!) ---
+            // --- Stage 2 (Center, X = -6): Azula Blue Firebending (roaring blue flames sweeping across center!) ---
             Vector3 pos2 = new Vector3(-6f, 0f, -2.5f);
-            CreatePedestalAndMannequin("Stage_2_LightningBending", pos2, 2.0f, 6.0f, matPedestal, matHero, false);
+            CreatePedestalAndMannequin("Stage_2_AzulaBlueFlames", pos2, 2.0f, 6.0f, matPedestal, matHero, false);
             GameObject inst2 = (GameObject)PrefabUtility.InstantiatePrefab(prefab2);
             inst2.transform.position = pos2 + new Vector3(0.55f, 1.35f, 0.35f);
-            inst2.transform.rotation = Quaternion.Euler(0f, 62f, 0f); // Heroic sweeping left-to-right lightning bolt!
+            inst2.transform.rotation = Quaternion.Euler(0f, 62f, 0f);
 
             // --- Stage 3 (Right, X = +20): Colossal Final Boss Auramaxxing ---
             Vector3 pos3 = new Vector3(20f, 0f, 0f);
@@ -1764,7 +1832,7 @@ namespace GamedevVFX.Editor
             GameObject camRig = new GameObject("CameraViews");
             Transform viewOverview = CreateCamAnchor(camRig, "View_0_Overview",     new Vector3(0f, 9.2f, -38.5f),   new Vector3(0f, 4.0f, 1.0f));
             Transform viewVFX1     = CreateCamAnchor(camRig, "View_1_MagicalGirl",  new Vector3(-20f, 4.6f, -18.5f), pos1 + new Vector3(0f, 4.4f, 0f));
-            Transform viewVFX2     = CreateCamAnchor(camRig, "View_2_Lightning",    new Vector3(-1.0f, 4.5f, -18.5f),pos2 + new Vector3(5.8f, 1.8f, 3.2f));
+            Transform viewVFX2     = CreateCamAnchor(camRig, "View_2_AzulaBlueFlames", new Vector3(-1.0f, 4.5f, -18.5f), pos2 + new Vector3(5.8f, 1.8f, 3.2f));
             Transform viewVFX3     = CreateCamAnchor(camRig, "View_3_FinalBoss",    new Vector3(20f, 4.8f, -19.5f),  pos3 + new Vector3(0f, 4.4f, 0f));
 
             camObj.transform.position = viewOverview.position;
@@ -1898,7 +1966,7 @@ namespace GamedevVFX.Editor
             SimulateStepped(ctrl.elementalBendingStrike, 0.34f, 1f / 60f);
             SimulateStepped(ctrl.finalBossAuramaxxing, 2.08f, 1f / 30f);
 
-            string[] shotNames = { "00_overview.png", "01_magical_girl.png", "02_lightning_bending.png", "03_final_boss.png" };
+            string[] shotNames = { "00_overview.png", "01_magical_girl.png", "02_azula_blue_flames.png", "03_final_boss.png" };
             for (int i = 0; i < ctrl.cameraViews.Length && i < shotNames.Length; i++)
             {
                 cam.transform.position = ctrl.cameraViews[i].position;
