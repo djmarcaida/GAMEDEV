@@ -7556,7 +7556,7 @@ ParticleSystem:
     enabled: 1
     x:
       serializedVersion: 3
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -7573,7 +7573,7 @@ ParticleSystem:
         m_RotationOrder: 4
     y:
       serializedVersion: 3
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -7605,7 +7605,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    separateAxes: 1
+    separateAxes: 0
   ColorModule:
     enabled: 1
     gradient:

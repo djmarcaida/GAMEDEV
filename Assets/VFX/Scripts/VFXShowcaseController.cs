@@ -7,26 +7,26 @@ namespace GamedevVFX
 {
     public class VFXShowcaseController : MonoBehaviour
     {
-        [Header("Particle Prefab Instances")]
+        [Header("Effects")]
         public ParticleSystem magicalGirlHenshin;
         public ParticleSystem elementalBendingStrike;
         public ParticleSystem finalBossAuramaxxing;
 
-        [Header("Camera Presets")]
+        [Header("Camera")]
         public Transform mainCamera;
         public Transform[] cameraViews;
         public string[] viewLabels =
         {
-            "Overview (All 3)",
-            "VFX 1: Magical Girl Henshin (Sky Starfall)",
-            "VFX 2: Azula Blue Firebending",
-            "VFX 3: Final Boss Auramaxxing"
+            "Overview",
+            "Magical Girl",
+            "Azula Blue Flames",
+            "Final Boss Aura"
         };
-
-        [Header("Camera Smoothing")]
         public float moveLerpSpeed = 6f;
 
         private int _activeViewIndex;
+        private Texture2D _bgTex;
+        private Texture2D _btnTex;
         private GUIStyle _boxStyle;
         private GUIStyle _titleStyle;
         private GUIStyle _labelStyle;
@@ -37,13 +37,17 @@ namespace GamedevVFX
             if (mainCamera == null && Camera.main != null)
                 mainCamera = Camera.main.transform;
 
-            // Start the continuous Boss Auramaxxing VFX active immediately
             if (finalBossAuramaxxing != null && !finalBossAuramaxxing.isPlaying)
                 finalBossAuramaxxing.Play(true);
 
-            // Play one-shots once at start so the showcase immediately comes alive
             PlayVFX1();
             PlayVFX2();
+        }
+
+        private void OnDestroy()
+        {
+            if (_bgTex != null) Destroy(_bgTex);
+            if (_btnTex != null) Destroy(_btnTex);
         }
 
         private void Update()
@@ -68,21 +72,18 @@ namespace GamedevVFX
 
         public void PlayVFX1()
         {
-            if (magicalGirlHenshin == null) return;
-            magicalGirlHenshin.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            magicalGirlHenshin.Play(true);
+            RestartEffect(magicalGirlHenshin);
         }
 
         public void PlayVFX2()
         {
-            if (elementalBendingStrike == null) return;
-            elementalBendingStrike.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            elementalBendingStrike.Play(true);
+            RestartEffect(elementalBendingStrike);
         }
 
         public void ToggleVFX3()
         {
             if (finalBossAuramaxxing == null) return;
+
             if (finalBossAuramaxxing.isPlaying)
                 finalBossAuramaxxing.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             else
@@ -103,6 +104,13 @@ namespace GamedevVFX
             _activeViewIndex = (_activeViewIndex + 1) % cameraViews.Length;
         }
 
+        private static void RestartEffect(ParticleSystem ps)
+        {
+            if (ps == null) return;
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ps.Play(true);
+        }
+
         private void UpdateCameraTransform()
         {
             if (mainCamera == null || cameraViews == null || cameraViews.Length == 0) return;
@@ -117,7 +125,7 @@ namespace GamedevVFX
         private static bool WasKeyPressed(KeyCode code)
         {
 #if ENABLE_INPUT_SYSTEM
-            var kb = Keyboard.current;
+            Keyboard kb = Keyboard.current;
             if (kb == null) return false;
             return code switch
             {
@@ -133,21 +141,24 @@ namespace GamedevVFX
 #endif
         }
 
+        private static Texture2D CreateSolidTexture(Color color)
+        {
+            var tex = new Texture2D(1, 1);
+            tex.SetPixel(0, 0, color);
+            tex.Apply();
+            return tex;
+        }
+
         private void EnsureStyles()
         {
             if (_boxStyle != null) return;
 
-            var bgTex = new Texture2D(1, 1);
-            bgTex.SetPixel(0, 0, new Color(0.06f, 0.07f, 0.11f, 0.82f));
-            bgTex.Apply();
-
-            var btnTex = new Texture2D(1, 1);
-            btnTex.SetPixel(0, 0, new Color(0.16f, 0.18f, 0.26f, 0.92f));
-            btnTex.Apply();
+            _bgTex = CreateSolidTexture(new Color(0.06f, 0.07f, 0.11f, 0.82f));
+            _btnTex = CreateSolidTexture(new Color(0.16f, 0.18f, 0.26f, 0.92f));
 
             _boxStyle = new GUIStyle(GUI.skin.box)
             {
-                normal = { background = bgTex },
+                normal = { background = _bgTex },
                 padding = new RectOffset(14, 14, 10, 10)
             };
 
@@ -168,7 +179,7 @@ namespace GamedevVFX
             {
                 fontSize = 12,
                 fontStyle = FontStyle.Bold,
-                normal = { background = btnTex, textColor = Color.white }
+                normal = { background = _btnTex, textColor = Color.white }
             };
         }
 
@@ -178,18 +189,18 @@ namespace GamedevVFX
 
             GUILayout.BeginArea(new Rect(18, 18, 340, 215), _boxStyle);
             GUILayout.Label("URP Particle VFX Showcase", _titleStyle);
-            string camName = (viewLabels != null && _activeViewIndex < viewLabels.Length)
+            string camName = viewLabels != null && _activeViewIndex < viewLabels.Length
                 ? viewLabels[_activeViewIndex]
                 : "Default";
             GUILayout.Label($"Camera [Tab]: {camName}", _labelStyle);
             GUILayout.Space(6);
 
-            if (GUILayout.Button("[1] Play VFX 1 — Magical Girl Starfall", _buttonStyle, GUILayout.Height(26)))
+            if (GUILayout.Button("[1] Magical Girl Starfall", _buttonStyle, GUILayout.Height(26)))
                 PlayVFX1();
-            if (GUILayout.Button("[2] Play VFX 2 — Azula Blue Flames", _buttonStyle, GUILayout.Height(26)))
+            if (GUILayout.Button("[2] Azula Blue Flames", _buttonStyle, GUILayout.Height(26)))
                 PlayVFX2();
             bool bossOn = finalBossAuramaxxing != null && finalBossAuramaxxing.isPlaying;
-            if (GUILayout.Button($"[3] Toggle VFX 3 — Boss Auramaxxing ({(bossOn ? "ON" : "OFF")})", _buttonStyle, GUILayout.Height(26)))
+            if (GUILayout.Button($"[3] Boss Aura ({(bossOn ? "ON" : "OFF")})", _buttonStyle, GUILayout.Height(26)))
                 ToggleVFX3();
 
             GUILayout.Space(4);
